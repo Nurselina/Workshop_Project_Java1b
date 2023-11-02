@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Kullanıcı Yönetimi</h2>
+
+<h3>Kullanıcı Ekle</h3>
+<form id="addUserForm">
+    ID: <input type="text" id="userId"><br>
+    İsim: <input type="text" id="userName"><br>
+    Email: <input type="text" id="userEmail"><br>
+    Yaş: <input type="text" id="userAge"><br>
+    <button type="button" onclick="addUser()">Kullanıcı Ekle</button>
+</form>
+
+<h3>Kullanıcı Güncelle</h3>
+<form id="updateUserForm">
+    ID: <input type="text" id="updateUserId"><br>
+    İsim: <input type="text" id="updateUserName"><br>
+    Email: <input type="text" id="updateUserEmail"><br>
+    Yaş: <input type="text" id="updateUserAge"><br>
+    <button type="button" onclick="updateUser()">Kullanıcı Güncelle</button>
+</form>
+
+<h3>Kullanıcı Sil</h3>
+<form id="deleteUserForm">
+    ID: <input type="text" id="deleteUserId"><br>
+    <button type="button" onclick="deleteUser()">Kullanıcı Sil</button>
+</form>
+
+<h3>Tüm Kullanıcıları Listele</h3>
+<button type="button" onclick="getAllUsers()">Tüm Kullanıcıları Listele</button>
+
+<div id="userList"></div>
+
+<script>
+    function addUser() {
+const userId = document.getElementById('userId').value;
+const userName = document.getElementById('userName').value;
+const userEmail = document.getElementById('userEmail').value;
+const userAge = document.getElementById('userAge').value;
+
+
+const userData = {
+    id: userId,
+    name: userName,
+    email: userEmail,
+    age: userAge
+};
+
+fetch('http://localhost:8080/users', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+})
+.then(response => {
+    if (response.ok) {
+        console.log('Kullanıcı başarıyla eklendi');
+        // İşlem başarılıysa isterseniz sayfayı yenileyebilir ya da başka bir işlem yapabilirsiniz
+    } else {
+        console.log('Kullanıcı eklenirken hata oluştu');
+    }
+})
+.catch(error => {
+    console.error('Hata:', error);
+});
+}
+
+function updateUser() {
+const updateUserId = document.getElementById('updateUserId').value;
+const updateUserName = document.getElementById('updateUserName').value;
+const updateUserEmail = document.getElementById('updateUserEmail').value;
+const updateUserAge = document.getElementById('updateUserAge').value;
+
+fetch('http://localhost:8080/users/' + updateUserId, {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        name: updateUserName,
+        email: updateUserEmail,
+        age: updateUserAge
+    })
+})
+.then(response => {
+    if (response.ok) {
+        console.log('Kullanıcı başarıyla güncellendi');
+        // İşlem başarılıysa sayfa yenilenebilir ya da başka bir işlem yapılabilir
+    } else {
+        console.log('Kullanıcı güncellenirken hata oluştu');
+    }
+})
+.catch(error => {
+    console.error('Hata:', error);
+});
+}
+
+function deleteUser() {
+const deleteUserId = document.getElementById('deleteUserId').value;
+
+        fetch('http://localhost:8080/users/' + deleteUserId, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Kullanıcı başarıyla silindi');
+                // İşlem başarılıysa isterseniz sayfayı yenileyebilir ya da başka bir işlem yapabilirsiniz
+            } else {
+                console.log('Kullanıcı silinirken hata oluştu');
+            }
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+        });
+}
+
+function getAllUsers() {
+fetch('http://localhost:8080/users', {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = ''; // Listeyi temizle
+
+            data.forEach(user => {
+                userList.innerHTML += `<p>ID: ${user.id}, İsim: ${user.name}, Email: ${user.email}, Yaş: ${user.age}</p>`;
+            });
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+        });
+}
+
+</script>
+</body>
+</html>
